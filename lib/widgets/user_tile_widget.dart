@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet_app_ui/pages/transaction_page.dart';
 
@@ -16,11 +17,25 @@ class UserTileWidget extends StatefulWidget {
   State<UserTileWidget> createState() => _GroupTileState();
 }
 
+
+
 class _GroupTileState extends State<UserTileWidget> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        if(widget.userToId != _auth.currentUser!.uid){
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) =>  TransactionPage(
@@ -30,6 +45,9 @@ class _GroupTileState extends State<UserTileWidget> {
             ),
           ),
         );
+        }else{
+          _showSnackbar("Cannot Send Transaction");
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),

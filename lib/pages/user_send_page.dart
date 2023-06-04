@@ -39,13 +39,66 @@ class _UsersPageState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('User List'),
-      ),
-      body: userData.isEmpty
-          ? Center(child: CircularProgressIndicator())
-           : groupListFromAdmin()
-    );
+        bottomNavigationBar: BottomAppBar(
+//        color: Colors.black54,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.home,
+                    size: 32,
+                    color: Colors.deepOrange,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.person,
+                    size: 32,
+                    color: Colors.deepPurpleAccent,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        backgroundColor: Colors.grey[300],
+        body: userData.isEmpty
+            ? Center(child: CircularProgressIndicator())
+            : SafeArea(
+                child: Column(children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 25.0, vertical: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Row(
+                        children: [
+                          Text(
+                            "Select",
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            " User",
+                            style: TextStyle(
+                              fontSize: 28,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                groupListFromAdmin()
+              ])));
   }
 
   groupListFromAdmin() {
@@ -64,7 +117,10 @@ class _UsersPageState extends State<UsersPage> {
         Map<String, dynamic> user = userData[userId];
         String username = user['name'];
         String email = user['email'];
-        return UserTileWidget(userToId: userId, userToName: username, userName: AuthMethods().giveUserName().toString());
+        return UserTileWidget(
+            userToId: userId,
+            userToName: username,
+            userName: AuthMethods().giveUserName().toString());
       },
     );
   }

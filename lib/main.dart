@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 
-      home: Authenticate()//LogInPage()//,
+      home: LogInPage()//Authenticate(),
     );
   }
 }

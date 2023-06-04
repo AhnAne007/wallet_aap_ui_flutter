@@ -19,13 +19,27 @@ class TransactionPage extends StatefulWidget {
 }
 
 class _TransactionPageState extends State<TransactionPage> {
-  late String balance;
+  late String balance1;
+  late String balance2;
+
   final formKey = GlobalKey<FormState>();
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late CollectionReference usersRef = firebaseFirestore.collection("users");
+
+  TextEditingController _amountController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _fetchBalance();
+  }
+
+  //a method to set the status of the user Online or Offline.
+  Future<void> setBalance(int balance, String idUser) async {
+    await firebaseFirestore.collection('users').doc(idUser).update({
+      "balance": balance.toString(),
+    });
   }
 
   void _fetchBalance() async {
@@ -37,17 +51,39 @@ class _TransactionPageState extends State<TransactionPage> {
           .get();
       if (snapshot.exists) {
         setState(() {
-          balance =
+          balance1 =
               (snapshot.data() as Map<String, dynamic>)['balance'].toString();
         });
       } else {
         setState(() {
-          balance = 'No data available';
+          balance1 = 'No data available';
         });
       }
     } catch (e) {
       setState(() {
-        balance = 'Error occurred';
+        balance1 = 'Error occurred';
+      });
+      print(e.toString());
+    }
+
+    try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userToId)
+          .get();
+      if (snapshot.exists) {
+        setState(() {
+          balance2 =
+              (snapshot.data() as Map<String, dynamic>)['balance'].toString();
+        });
+      } else {
+        setState(() {
+          balance2 = 'No data available';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        balance2 = 'Error occurred';
       });
       print(e.toString());
     }
@@ -62,7 +98,7 @@ class _TransactionPageState extends State<TransactionPage> {
     );
   }
 
-  Future<void> sendTransaction() async {
+  Future<void> sendTransaction(String Amount) async {
     String authenticatedUserId = FirebaseAuth.instance.currentUser!.uid;
 
     List<Future<void>> storeTransactionsFrom = [];
@@ -76,7 +112,7 @@ class _TransactionPageState extends State<TransactionPage> {
         .add({
       'to': widget.userToId,
       'from': authenticatedUserId,
-      'balance': 50,
+      'balance': Amount,
       'status': 0,
     }).then((value) {
       print('Transaction stored successfully in Firestore!');
@@ -91,7 +127,7 @@ class _TransactionPageState extends State<TransactionPage> {
         .add({
       'to': widget.userToId,
       'from': authenticatedUserId,
-      'balance': 50,
+      'balance': Amount,
       'status': 1,
     }).then((value) {
       print('Transaction stored successfully in Firestore!');
@@ -193,6 +229,7 @@ class _TransactionPageState extends State<TransactionPage> {
                               }
                             },
                             keyboardType: TextInputType.number,
+                            controller: _amountController,
                           )
                         ],
                       )),
@@ -203,15 +240,29 @@ class _TransactionPageState extends State<TransactionPage> {
                     children: [
                       Text(
                         "Send to " + widget.userToName,
-                        style: TextStyle(fontSize: 18, color: Colors.blueGrey[800]),
+                        style: TextStyle(
+                            fontSize: 18, color: Colors.blueGrey[800]),
                       ),
                       SizedBox(
                         width: 30,
                       ),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (formKey.currentState!.validate()) {
-                            sendTransaction();
+                            if (int.parse(balance1) >
+                                int.parse(_amountController.text)) {
+                              await sendTransaction(_amountController.text);
+                              await setBalance(
+                                  int.parse(balance1) -
+                                      int.parse(_amountController.text),
+                                  _auth.currentUser!.uid);
+                              setBalance(
+                                  int.parse(balance2) +
+                                      int.parse(_amountController.text),
+                                  widget.userToId);
+                            } else {
+                              _showSnackbar("Balance is not sufficient");
+                            }
                           } else {
                             _showSnackbar("Please fill the amount correctly");
                           }
