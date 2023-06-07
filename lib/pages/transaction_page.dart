@@ -111,6 +111,7 @@ class _TransactionPageState extends State<TransactionPage> {
         .collection('transactions')
         .add({
       'to': widget.userToId,
+      'toname':widget.userToName,
       'from': authenticatedUserId,
       'balance': Amount,
       'status': 0,
@@ -126,6 +127,7 @@ class _TransactionPageState extends State<TransactionPage> {
         .collection('transactions')
         .add({
       'to': widget.userToId,
+      'toname':widget.userToName,
       'from': authenticatedUserId,
       'balance': Amount,
       'status': 1,

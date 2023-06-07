@@ -1,24 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet_app_ui/resources/auth_methods.dart';
-import 'package:wallet_app_ui/widgets/user_tile_widget.dart';
+import 'package:wallet_app_ui/widgets/transactions_tile.dart';
 
-class UsersPage extends StatefulWidget {
-  const UsersPage({Key? key}) : super(key: key);
+class TransactionHistoryPage extends StatefulWidget {
+  const TransactionHistoryPage({Key? key}) : super(key: key);
 
   @override
-  State<UsersPage> createState() => _UsersPageState();
+  State<TransactionHistoryPage> createState() => _UsersPageState();
 }
 
-class _UsersPageState extends State<UsersPage> {
-  Map<String, dynamic> userData = {};
-  void _fetchUsers() async {
+class _UsersPageState extends State<TransactionHistoryPage> {
+  Map<String, dynamic> transactionHistory = {};
+  String authenticatedUserId = FirebaseAuth.instance.currentUser!.uid;
+
+  void _fetchTransactions() async {
     try {
-      QuerySnapshot snapshot =
-          await FirebaseFirestore.instance.collection('users').get();
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('TransactionHistory')
+          .doc(authenticatedUserId)
+          .collection("transactions")
+          .get();
       if (snapshot.docs.isNotEmpty) {
         setState(() {
-          userData = Map.fromIterable(
+          transactionHistory = Map.fromIterable(
             snapshot.docs,
             key: (doc) => doc.id,
             value: (doc) => doc.data(),
@@ -33,7 +39,7 @@ class _UsersPageState extends State<UsersPage> {
   @override
   void initState() {
     super.initState();
-    _fetchUsers();
+    _fetchTransactions();
   }
 
   @override
@@ -67,7 +73,7 @@ class _UsersPageState extends State<UsersPage> {
           ),
         ),
         backgroundColor: Colors.grey[300],
-        body: userData.isEmpty
+        body: transactionHistory.isEmpty
             ? Center(child: CircularProgressIndicator())
             : SafeArea(
                 child: Column(children: [
@@ -80,14 +86,14 @@ class _UsersPageState extends State<UsersPage> {
                       const Row(
                         children: [
                           Text(
-                            "Select",
+                            "Transaction",
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
-                            " User",
+                            " History",
                             style: TextStyle(
                               fontSize: 28,
                             ),
@@ -103,18 +109,21 @@ class _UsersPageState extends State<UsersPage> {
 
   groupListFromAdmin() {
     Size size = MediaQuery.of(context).size;
-
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: userData.length,
+      itemCount: transactionHistory.length,
       itemBuilder: (context, index) {
-        String userId = userData.keys.elementAt(index);
-        Map<String, dynamic> user = userData[userId];
-        String username = user['name'];
-        return UserTileWidget(
-            userToId: userId,
-            userToName: username,
-            userName: AuthMethods().giveUserName().toString());
+        String userId = transactionHistory.keys.elementAt(index);
+        Map<String, dynamic> transaction = transactionHistory[userId];
+        String userFrom = transaction['toname'];
+        int status = transaction['status'];
+        String amount = transaction['balance'];
+        return TransactionTileWidget(
+            status: status,
+            userToName: AuthMethods().giveUserName().toString(),
+            userFromName: userFrom,
+            imageAssetSent: "assets/to_other_account.png",
+            imageAssetReceived: "assets/to_your_account.png", amount: amount,);
       },
     );
   }

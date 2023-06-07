@@ -3,7 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:wallet_app_ui/model/model_class_card.dart';
+import 'package:wallet_app_ui/pages/login_page.dart';
+import 'package:wallet_app_ui/pages/transaction_history_page.dart';
 import 'package:wallet_app_ui/pages/user_send_page.dart';
+import 'package:wallet_app_ui/resources/auth_methods.dart';
 import 'package:wallet_app_ui/widgets/card.dart';
 import 'package:wallet_app_ui/widgets/list_tile_button_widget.dart';
 import 'package:wallet_app_ui/widgets/shadow_button_widget.dart';
@@ -110,15 +113,29 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Row(
+                   Row(
                     children: [
-                      Text(
-                        "My",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
+                        InkWell(
+                          child: Text(
+                            "My",
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          onTap: () async {
+                            await AuthMethods().loginOut();
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return LogInPage();
+                                },
+                              ),
+                            );
+                          } ,
                         ),
-                      ),
+
                       Text(
                         " Cards",
                         style: TextStyle(
@@ -216,10 +233,22 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(25.0),
               child: Column(
                 children: [
-                  ListTileButtonWidget(
-                      imageAsset: "assets/statistics.png",
-                      tileHeader: "Statistics",
-                      tileSubName: "Payments and Income"),
+                  InkWell(
+                    child: ListTileButtonWidget(
+                        imageAsset: "assets/statistics.png",
+                        tileHeader: "Statistics",
+                        tileSubName: "Payments and Income"),
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return TransactionHistoryPage();
+                          },
+                        ),
+                      );
+                    },
+                  ),
                   ListTileButtonWidget(
                       imageAsset: "assets/transaction.png",
                       tileHeader: "Transaction",
