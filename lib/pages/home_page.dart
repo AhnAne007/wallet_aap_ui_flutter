@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
     _fetchBalance();
   }
 
-  void _fetchBalance() async {
+  Future<void> _fetchBalance() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
@@ -38,7 +38,8 @@ class _HomePageState extends State<HomePage> {
           .get();
       if (snapshot.exists) {
         setState(() {
-          balance = (snapshot.data() as Map<String, dynamic>)['balance'].toString();
+          balance =
+              (snapshot.data() as Map<String, dynamic>)['balance'].toString();
         });
       } else {
         setState(() {
@@ -62,8 +63,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +71,7 @@ class _HomePageState extends State<HomePage> {
         child: Icon(Icons.monetization_on),
         onPressed: () {
           _fetchBalance();
-          _showSnackbar("Your Current Balnce is "+balance);
+          _showSnackbar("Your Current Balnce is " + balance);
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -106,36 +105,34 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Column(
           children: [
-            // app bar
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 25.0, vertical: 25.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   Row(
+                  Row(
                     children: [
-                        InkWell(
-                          child: Text(
-                            "My",
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      InkWell(
+                        child: Text(
+                          "My",
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
                           ),
-                          onTap: () async {
-                            await AuthMethods().loginOut();
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return LogInPage();
-                                },
-                              ),
-                            );
-                          } ,
                         ),
-
+                        onTap: () async {
+                          await AuthMethods().loginOut();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return LogInPage();
+                              },
+                            ),
+                          );
+                        },
+                      ),
                       Text(
                         " Cards",
                         style: TextStyle(
@@ -156,7 +153,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            // cards
             Container(
               height: 151,
               //color: Colors.red,
@@ -166,15 +162,30 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   CardWidget(
                     cardObject: CardModelClass(
-                        12, 23, 5010, 3120267449878, Colors.deepPurpleAccent),
+                      12,
+                      23,
+                      5010,
+                      3120267449878,
+                      Colors.deepPurpleAccent,
+                    ),
                   ),
                   CardWidget(
                     cardObject: CardModelClass(
-                        12, 23, 7090, 3120267449878, Colors.orange),
+                      12,
+                      23,
+                      7090,
+                      3120267449878,
+                      Colors.orange,
+                    ),
                   ),
                   CardWidget(
                     cardObject: CardModelClass(
-                        12, 23, 1567, 3120267449878, Colors.lightGreen),
+                      12,
+                      23,
+                      1567,
+                      3120267449878,
+                      Colors.lightGreen,
+                    ),
                   ),
                 ],
               ),
@@ -182,7 +193,6 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 25,
             ),
-            // A controller directly related to the showing options of it
             SmoothPageIndicator(
               controller: _controller,
               count: 3,
@@ -191,10 +201,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            //row of options
-            SizedBox(
-              height: 25,
-            ),
+            SizedBox(height: 25),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 25.0),
               child: Row(
@@ -217,17 +224,19 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   ShadowButtonWidget(
-                      iconImagePath: "assets/payment.png", buttonText: "Pay"),
+                    iconImagePath: "assets/payment.png",
+                    buttonText: "Pay",
+                  ),
                   ShadowButtonWidget(
-                      iconImagePath: "assets/bill.png", buttonText: "Bill"),
+                    iconImagePath: "assets/bill.png",
+                    buttonText: "Bill",
+                  ),
                 ],
               ),
             ),
 
-            SizedBox(
-              height: 5,
-            ),
-            //column of options
+            SizedBox(height: 5),
+
 
             Padding(
               padding: const EdgeInsets.all(25.0),
@@ -235,10 +244,11 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   InkWell(
                     child: ListTileButtonWidget(
-                        imageAsset: "assets/statistics.png",
-                        tileHeader: "Statistics",
-                        tileSubName: "Payments and Income"),
-                    onTap: (){
+                      imageAsset: "assets/statistics.png",
+                      tileHeader: "Statistics",
+                      tileSubName: "Payments and Income",
+                    ),
+                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -250,9 +260,10 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   ListTileButtonWidget(
-                      imageAsset: "assets/transaction.png",
-                      tileHeader: "Transaction",
-                      tileSubName: "Transaction History"),
+                    imageAsset: "assets/transaction.png",
+                    tileHeader: "Transaction",
+                    tileSubName: "Transaction History",
+                  ),
                 ],
               ),
             )

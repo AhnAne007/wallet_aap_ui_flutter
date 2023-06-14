@@ -17,7 +17,7 @@ class LogInPage extends StatefulWidget {
 }
 
 class _LogInPageState extends State<LogInPage> {
-  late bool _obsecureText = true;
+  bool _obsecureText = true;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -68,13 +68,7 @@ class _LogInPageState extends State<LogInPage> {
                   ),
                   suffixIcon: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        if (_obsecureText) {
-                          _obsecureText = false;
-                        } else {
-                          _obsecureText = true;
-                        }
-                      });
+                      setState(() {});
                     },
                     child: Icon(
                       _obsecureText ? Icons.visibility : Icons.visibility_off,
@@ -89,19 +83,21 @@ class _LogInPageState extends State<LogInPage> {
               padding: EdgeInsets.symmetric(horizontal: 100, vertical: 10),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 0, backgroundColor: Colors.lightGreenAccent[400],
-                    shape: const StadiumBorder(),
-                    maximumSize: const Size(double.infinity, 50),
-                    minimumSize: const Size(double.infinity, 50),
-                    //padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                    textStyle:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                  elevation: 0, backgroundColor: Colors.lightGreenAccent[400],
+                  shape: const StadiumBorder(),
+                  maximumSize: const Size(double.infinity, 50),
+                  minimumSize: const Size(double.infinity, 50),
+                  //padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  textStyle:
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
                 onPressed: () async {
                   String res = await AuthMethods().loginUser(
-                      email: _emailController.text,
-                      password: _passwordController.text);
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                  );
                   if (res == "Success") {
-                    ClearFields();
+                    _clearFields();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -153,7 +149,7 @@ class _LogInPageState extends State<LogInPage> {
     );
   }
 
-  void ClearFields() {
+  void _clearFields() {
     _emailController.text = "";
     _passwordController.text = "";
   }

@@ -22,6 +22,13 @@ class _SignUpScreenState extends State<SignUpPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
 
+  void _clearFields() {
+    _emailController.text = "";
+    _passwordController.text = "";
+    _usernameController.text = "";
+    _phoneNumberController.text = "";
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -74,11 +81,7 @@ class _SignUpScreenState extends State<SignUpPage> {
                   suffixIcon: GestureDetector(
                     onTap: () {
                       setState(() {
-                        if (_obsecureText) {
-                          _obsecureText = false;
-                        } else {
-                          _obsecureText = true;
-                        }
+                        _obsecureText = !_obsecureText;
                       });
                     },
                     child: Icon(
@@ -101,7 +104,7 @@ class _SignUpScreenState extends State<SignUpPage> {
                     backgroundColor: Colors.lightGreenAccent[400],
                     //padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                     textStyle:
-                    TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                 onPressed: () async {
                   String res = await AuthMethods().signUpUser(
                       email: _emailController.text,
@@ -109,13 +112,12 @@ class _SignUpScreenState extends State<SignUpPage> {
                       username: _usernameController.text,
                       phonenumber: _phoneNumberController.text);
                   if (res == "Success") {
-                    ClearFields();
+                    _clearFields();
                     final snackBar = SnackBar(
                       content: const Text('User Registered!'),
                       action: SnackBarAction(
                         label: 'OK',
                         onPressed: () {
-                          // Some code to undo the change.
                         },
                       ),
                     );
@@ -126,7 +128,6 @@ class _SignUpScreenState extends State<SignUpPage> {
                       action: SnackBarAction(
                         label: 'OK',
                         onPressed: () {
-                          // Some code to undo the change.
                         },
                       ),
                     );
@@ -156,12 +157,5 @@ class _SignUpScreenState extends State<SignUpPage> {
         ),
       ),
     );
-  }
-
-  void ClearFields() {
-    _emailController.text = "";
-    _passwordController.text = "";
-    _usernameController.text = "";
-    _phoneNumberController.text = "";
   }
 }

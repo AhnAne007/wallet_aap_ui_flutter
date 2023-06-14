@@ -103,11 +103,11 @@ class _UsersPageState extends State<TransactionHistoryPage> {
                     ],
                   ),
                 ),
-                groupListFromAdmin()
+                transactionListFromUser()
               ])));
   }
 
-  groupListFromAdmin() {
+  transactionListFromUser() {
     Size size = MediaQuery.of(context).size;
     return ListView.builder(
       shrinkWrap: true,

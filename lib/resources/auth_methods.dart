@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late User user;
+  late User _user;
   var verificationId = '';
 
   Future<String> signUpUser(
@@ -27,8 +27,8 @@ class AuthMethods {
           "phonenumber": phonenumber,
         });
 
-        user = (await _auth.currentUser)!;
-        user?.updateProfile(displayName: username);
+        _user = (await _auth.currentUser)!;
+        _user?.updateProfile(displayName: username);
         ;
       }
     } catch (err) {
